@@ -59,7 +59,7 @@ module.exports = function(source) {
 
         const entities = key.split('-');
         const filterQueue = [ ...entities.slice(1).reverse(), ...get(cplOpts, 'defaults',[]) ];
-        const phrase = entities[ 0 ];
+        let phrase = entities[ 0 ];
 
         filterQueue.forEach(function (filter) {
             switch (filter) {
@@ -77,6 +77,9 @@ module.exports = function(source) {
                     dict[ key ] = mdFilter.apply(dict[ key ]);
 
                     break;
+
+                default:
+                    phrase = key;
             }
         });
 
