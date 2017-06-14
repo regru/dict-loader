@@ -41,7 +41,7 @@ module.exports = function(source) {
     });
     bemFilter.init();
 
-    const mdFilter = new MdFilter();
+    const mdFilter = new MdFilter(this.options.markdown);
     mdFilter.init();
 
     const result = {
