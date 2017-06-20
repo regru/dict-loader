@@ -1,7 +1,11 @@
 {
   "name": "dict-loader",
-  "version": "0.0.4",
+  "version": "0.1.0",
   "description": "",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/shifteee/dict-loader.git"
+  },
   "main": "index.js",
   "directories": {
     "test": "tests"
@@ -22,6 +26,7 @@
     "lodash.get": "^4.4.2",
     "lodash.isplainobject": "^4.0.6",
     "markdown-it": "^8.3.1",
+    "object.omit": "^2.0.1",
     "typograf": "^6.0.0"
   }
 }

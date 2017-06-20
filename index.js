@@ -2,6 +2,7 @@ const path = require('path');
 
 const loaderUtils = require('loader-utils');
 const get = require('lodash.get');
+const omit = require('object.omit');
 
 const flatten = require('./lib/flatten');
 const getFsParams = require('./lib/getFsParams');
@@ -15,21 +16,19 @@ module.exports = function(source) {
         this.cacheable();
     }
 
-    const content = (typeof source === 'string')
-        ? this.exec( source, this.resourcePath )
-        : source;
-
-    const cplOpts = get(content, 'compile_options', {});
-    delete content.compile_options;
+    const options = loaderUtils.getOptions(this);
+    const jsonDict = JSON.parse( source.toString() );
+    const cplOpts = get(jsonDict, 'compile_options', {});
+    const content = omit(jsonDict, 'compile_options');
 
     const fsParams = getFsParams(
-        Object.assign({}, this.options.babelfish, {
+        Object.assign({}, options.babelfish, {
             file: this.resourcePath,
-    }));
+        }));
     const dict = flatten(content, fsParams.namespace);
 
     const tgFilter = new TgFilter(
-        Object.assign({}, this.options.typograf, {
+        Object.assign({}, options.typograf, {
             locale: fsParams.locale
         })
     );
@@ -37,15 +36,15 @@ module.exports = function(source) {
 
     const bemFilter = new BemFilter({
         compiler: cplOpts,
-        filtersList: this.options.bemFilters
+        filtersList: options.bemFilters
     });
     bemFilter.init();
 
-    const mdFilter = new MdFilter(this.options.markdown);
+    const mdFilter = new MdFilter(options.markdown);
     mdFilter.init();
 
     const result = {
-        fallback: this.options.babelfish.fallback,
+        fallback: options.babelfish.fallback,
         locales: {
             [ fsParams.locale ]: {},
         }
@@ -88,3 +87,5 @@ module.exports = function(source) {
 
     return `module.exports = ${JSON.stringify(result)}`;
 };
+
+module.exports.raw = true;
