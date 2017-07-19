@@ -62,7 +62,7 @@ suite('dict-loader', function () {
             const bemFilter = new BemFilter({ filtersList: require('./fixtures/bemRules') });
             bemFilter.init();
 
-            test('Should update link attributes', function () {
+            test('Should apply default bem filter ', function () {
 
                 const filtered = flatten(data);
 
@@ -80,7 +80,7 @@ suite('dict-loader', function () {
                     'simple.foo1.bar1': 'simple text',
                     'simple.foo1.bar2': ['simple', 'array'],
                     'simple.foo1.bar3.baz': 'simple text',
-                    'bem_filter-bem': 'some link to <a href=\"https://www.reg.ru\" rel=\"nofollow noopener noreferrer\" target=\"_blank\">some dest</a>',
+                    'bem_filter-bem': 'some link to <a href=\"https://www.reg.ru\" rel=\"nofollow noopener noreferrer\" target=\"_blank\" class=\"b-link b-link__default\">some dest</a>',
                 });
             });
         });
