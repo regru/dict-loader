@@ -1,4 +1,4 @@
-const data = require('./simpleInitData')
+const data = require('./simpleInitData');
 
 module.exports = {
     mdOnly: {
