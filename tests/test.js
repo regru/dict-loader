@@ -104,7 +104,7 @@ suite('dict-loader', function () {
                     filtered[ key ] = tgFilter.apply(filtered[ key ]);
                 }
 
-                filtered.should.be.eql({'text-tg': 'Some text (text) that should be corrected'})
+                filtered.should.be.eql({'text-tg': "Some text (text) that should be&nbsp;corrected"})
             });
         });
     });
