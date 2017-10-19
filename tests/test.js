@@ -88,7 +88,13 @@ suite('dict-loader', function () {
         suite('typograf', function () {
 
             const data = require('./fixtures/complexInitData').typograf;
-            const tgFilter = new TgFilter({ locale: 'en-US' });
+            const tgFilter = new TgFilter({
+                locale: 'en-US',
+                htmlEntity: {
+                    type: 'name',
+                },
+            });
+
             tgFilter.init();
 
             test('Should correct text', function () {
@@ -104,7 +110,7 @@ suite('dict-loader', function () {
                     filtered[ key ] = tgFilter.apply(filtered[ key ]);
                 }
 
-                filtered.should.be.eql({'text-tg': 'Some text (text) that should be corrected'})
+                filtered.should.be.eql({'text-tg': 'Some text (text) that should be&nbsp;corrected'})
             });
         });
     });
