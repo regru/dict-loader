@@ -68,7 +68,7 @@ module.exports = function(source) {
                     break;
 
                 case 'tg':
-                    content[ key ] = tgFilter.apply(dict[ key ]);
+                    dict[ key ] = tgFilter.apply(dict[ key ]);
 
                     break;
 
