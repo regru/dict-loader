@@ -1,10 +1,10 @@
 {
   "name": "dict-loader",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "",
   "repository": {
     "type": "git",
-    "url": "https://github.com/shifteee/dict-loader.git"
+    "url": "https://github.com/regru/dict-loader.git"
   },
   "main": "index.js",
   "directories": {
