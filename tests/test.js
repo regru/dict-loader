@@ -87,9 +87,14 @@ suite('dict-loader', function () {
 
         suite('typograf', function () {
 
-            const data = require('./fixtures/complexInitData').typograf;
+            const data = require('./fixtures/complexInitData');
             const tgFilter = new TgFilter({
-                locale: 'en-US',
+                locale: 'common',
+                rules : {
+                    disabled : [
+                        'common/space/afterPunctuation',
+                    ],
+                },
                 htmlEntity: {
                     type: 'name',
                 },
@@ -99,7 +104,7 @@ suite('dict-loader', function () {
 
             test('Should correct text', function () {
 
-                const filtered = flatten(data);
+                const filtered = flatten(data.typograf);
 
                 for (let key in filtered) {
 
@@ -111,6 +116,22 @@ suite('dict-loader', function () {
                 }
 
                 filtered.should.be.eql({'text-tg': 'Some text (text) that should be&nbsp;corrected'})
+            });
+
+            test('Should not damage babelfish structure', function () {
+
+                const filtered = flatten(data.typograf2);
+
+                for (let key in filtered) {
+
+                    if ( !/-tg/.test(key) ) {
+                        continue;
+                    }
+
+                    filtered[ key ] = tgFilter.apply(filtered[ key ]);
+                }
+
+                filtered.should.be.eql({'text-tg': '#{count} ((неоплаченный счёт|неоплаченных счёта|неоплаченных счетов)):count'})
             });
         });
     });

@@ -15,6 +15,10 @@ module.exports = {
         'text-tg': 'Some text ( text ) that should be corrected',
     },
 
+    typograf2: {
+        'text-tg': '#{count} ((неоплаченный счёт|неоплаченных счёта|неоплаченных счетов)):count',
+    },
+
     complex: {
         simple: data,
         'complex_filter-bem-md': 'some link to [some dest](#{value})',
