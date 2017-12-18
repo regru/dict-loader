@@ -6,6 +6,8 @@ const MdFilter = require('../lib/filters/markdown');
 const BemFilter = require('../lib/filters/bem');
 const TgFilter = require('../lib/filters/typograf');
 
+const Babelfish = require('babelfish');
+
 suite('dict-loader', function () {
 
     suite('flatten()', function () {
@@ -121,6 +123,7 @@ suite('dict-loader', function () {
             test('Should not damage babelfish structure', function () {
 
                 const filtered = flatten(data.typograf2);
+                const l10n = new Babelfish('ru-RU');
 
                 for (let key in filtered) {
 
@@ -131,7 +134,16 @@ suite('dict-loader', function () {
                     filtered[ key ] = tgFilter.apply(filtered[ key ]);
                 }
 
-                filtered.should.be.eql({'text-tg': '#{count} ((неоплаченный счёт|неоплаченных счёта|неоплаченных счетов)):count'})
+                filtered.should.be.eql({
+                    'text-tg': '#{count} ((неоплаченный счёт|неоплаченных счёта|неоплаченных счетов)):count',
+                    'more_text-tg': '#{count} ((=0 | |неоплаченных счёта|неоплаченных счетов)):count',
+                });
+
+                l10n.addPhrase('ru-RU', 'test', filtered[ 'more_text-tg' ]);
+
+                l10n.t('ru-RU', 'test', {count: 0}).should.be.equal('0 ');
+                l10n.t('ru-RU', 'test', {count: 2}).should.be.equal('2 неоплаченных счёта');
+                l10n.t('ru-RU', 'test', {count: 10}).should.be.equal('10 неоплаченных счетов');
             });
         });
     });
