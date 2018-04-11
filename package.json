@@ -1,22 +1,23 @@
 {
-  "name": "dict-loader",
+  "name": "@regru/dict-loader",
   "version": "0.2.4",
-  "description": "",
+  "description": "Webpack loader for babelfish i18n",
   "repository": {
     "type": "git",
-    "url": "https://github.com/regru/dict-loader.git"
+    "url": "git+https://github.com/regru/dict-loader.git"
   },
   "main": "index.js",
   "directories": {
+    "lib": "lib",
     "test": "tests"
   },
   "scripts": {
-    "test": "node_modules/.bin/mocha --ui tdd tests/test.js"
+    "test": "mocha --ui tdd tests/test.js"
   },
-  "author": "<shiftmailbox@gmail.com>",
-  "license": "ISC",
+  "author": "Makarychev Andrey <shiftmailbox@gmail.com>",
+  "license": "MIT",
   "devDependencies": {
-    "babelfish": "https://github.com/regru/babelfish.git#1.1.3-regru",
+    "babelfish": "git+https://github.com/regru/babelfish.git#1.1.3-regru",
     "chai": "^3.5.0",
     "mocha": "^3.2.0"
   },
@@ -29,5 +30,14 @@
     "markdown-it": "^8.3.1",
     "object.omit": "^2.0.1",
     "typograf": "^6.0.0"
-  }
+  },
+  "bugs": {
+    "url": "https://github.com/regru/dict-loader/issues"
+  },
+  "homepage": "https://github.com/regru/dict-loader#readme",
+  "keywords": [
+    "webpack",
+    "loader",
+    "babelfish"
+  ]
 }
