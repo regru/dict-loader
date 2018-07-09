@@ -7,8 +7,13 @@ module.exports = {
     },
 
     bemOnly: {
-        simple: data,
-        'bem_filter-bem': 'some link to <a href="https://www.reg.ru">some dest</a>',
+        'simple-bem': '<p>Simple paragraph</p>',
+        'simple_with_class-bem': '<p class="b-text">Simple paragraph</p>',
+        'simple_input-bem': '<label><input type="checkbox"/>Some label</label>',
+        'simple_input_duplicated-bem': '<label><input type="checkbox" checked/>Some label</label>',
+        'simple_div-bem': '<div class="b-block">Block</div>',
+        'bem_filter_ext-bem': 'some link to <a href="https://example.com">some dest</a>',
+        'bem_filter_int-bem': 'some link to <a href="/dest/url">some dest</a>',
     },
 
     typograf: {

@@ -1,4 +1,5 @@
 const should = require('chai').should();
+const sinon = require('sinon');
 
 const loader = require('../');
 const flatten = require('../lib/flatten');
@@ -32,7 +33,6 @@ suite('dict-loader', function () {
 
             const data = require('./fixtures/complexInitData').mdOnly;
             const mdFilter = new MdFilter();
-            mdFilter.init();
 
 
             test('Should markdown string', function () {
@@ -60,31 +60,88 @@ suite('dict-loader', function () {
 
         suite('bem', function () {
 
-            const data = require('./fixtures/complexInitData').bemOnly;
-            const bemFilter = new BemFilter({ filtersList: require('./fixtures/bemRules') });
-            bemFilter.init();
+            const data = require('./fixtures/complexInitData');
+            const filtersList = require('./fixtures/bemRules');
+            const bemFilter = new BemFilter({ filtersList });
 
-            test('Should apply default bem filter ', function () {
+            suite( '#_setOrAddAttr', function () {
 
-                const filtered = flatten(data);
+                test( 'Should set new class attribute if none anabled', function() {
+                    const res = bemFilter._setOrAddAttr( data.bemOnly['simple-bem'], 'p', 'class', 'b-text' );
 
-                for (let key in filtered) {
+                    res.should.be.eql('<p class="b-text">Simple paragraph</p>');
+                } );
 
-                    if ( !/-bem/.test(key) ) {
-                        continue;
-                    }
+                test( 'Should add class to existed', function() {
+                    const res = bemFilter._setOrAddAttr( data.bemOnly['simple_with_class-bem'], 'p', 'class', 'b-text_type_minor' );
 
-                    filtered[ key ] = bemFilter.apply(filtered[ key ]);
-                }
+                    res.should.be.eql('<p class="b-text b-text_type_minor">Simple paragraph</p>');
+                } );
 
-                filtered.should.be.eql({
-                    'simple.foo': 'bar',
-                    'simple.foo1.bar1': 'simple text',
-                    'simple.foo1.bar2': ['simple', 'array'],
-                    'simple.foo1.bar3.baz': 'simple text',
-                    'bem_filter-bem': 'some link to <a href=\"https://www.reg.ru\" rel=\"nofollow noopener noreferrer\" target=\"_blank\" class=\"b-link b-link__default\">some dest</a>',
-                });
-            });
+                test( 'Should add boolean attribute', function() {
+                    const res = bemFilter._setOrAddAttr( data.bemOnly['simple_input-bem'], 'input', 'checked' );
+
+                    res.should.be.eql('<label><input type="checkbox" checked/>Some label</label>');
+                } );
+
+                test( 'Should add attribute', function() {
+                    const res = bemFilter._setOrAddAttr( data.bemOnly['simple_div-bem'], 'div', 'data-type', 'double' );
+
+                    res.should.be.eql('<div class="b-block" data-type="double">Block</div>');
+                } );
+
+                test( 'Should not duplicate boolean attribute', function() {
+                    const res = bemFilter._setOrAddAttr( data.bemOnly['simple_input_duplicated-bem'], 'input', 'checked' );
+
+                    res.should.be.eql('<label><input type="checkbox" checked/>Some label</label>');
+                } );
+
+                test( 'Should not process if condition function returns falsy value', function() {
+                    const res = bemFilter._setOrAddAttr( data.bemOnly['simple-bem'], 'p', 'class', 'b-text', () => false );
+
+                    res.should.be.eql('<p>Simple paragraph</p>');
+                } );
+
+                test( 'Should process if condition function returns truthly value', function() {
+                    const res = bemFilter._setOrAddAttr( data.bemOnly['simple-bem'], 'p', 'class', 'b-text', () => true );
+
+                    res.should.be.eql('<p class="b-text">Simple paragraph</p>');
+                } );
+            } );
+
+            suite( '#_apply', function() {
+                let spy;
+
+                beforeEach( function() {
+                    spy = sinon.spy( bemFilter, '_setOrAddAttr' );
+                } );
+
+                afterEach( function() {
+                    sinon.restore();
+                } );
+
+                test( 'Should take tag, attribute and value from specified filter ( case class )', function() {
+                    bemFilter._apply( data.bemOnly['simple-bem'] );
+
+                   spy.calledWith( 'p', 'class', filtersList[ 0 ].default.classes.p );
+                } );
+
+                test( 'Should take tag, attribute and value from specified filter ( case attrs )', function() {
+                    bemFilter._apply( data.bemOnly['simple_input-bem'] );
+
+                   spy.calledWith( 'input', 'checked' );
+                } );
+
+                test( 'Should take tag, attribute and value from specified filter ( case ext_ )', function() {
+                    bemFilter._apply( data.bemOnly['bem_filter_ext-bem'] );
+
+                    const spyCallRel = spy.getCall(0);
+                    const spyCallTarget = spy.getCall(1);
+
+                    spyCallRel.calledWith( 'a', 'rel', filtersList[ 0 ].default.ext_rel );
+                    spyCallTarget.calledWith( 'a', 'target', filtersList[ 0 ].default.ext_target );
+                } );
+            } );
         });
 
         suite('typograf', function () {
@@ -101,8 +158,6 @@ suite('dict-loader', function () {
                     type: 'name',
                 },
             });
-
-            tgFilter.init();
 
             test('Should correct text', function () {
 
