@@ -1,0 +1,9 @@
+{
+  "extends": "@regru/regru-light",
+  "globals": {
+    "suite": true,
+    "test": true,
+    "beforeEach": true,
+    "afterEach": true
+  }
+}
