@@ -21,13 +21,13 @@ module.exports = function( source ) {
     const compileOpts = get( jsonContent, 'compile_options', {} );
     const getQueue = createFiltersQueue( compileOpts.defaults );
     const content = omit( jsonContent, 'compile_options' );
-    const dict = flatten( content, options.fsParams.namespace );
 
     validate( options );
 
     options.fsParams = getParamsFromFile( this.resourcePath, options.babelfish );
     options.compileOptions = compileOpts;
 
+    const dict = flatten( content, options.fsParams.namespace );
     const result = {
         fallback : options.babelfish.fallback,
         locales  : {
