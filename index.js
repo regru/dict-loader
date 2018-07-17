@@ -3,10 +3,11 @@ const get = require('lodash.get');
 const omit = require('object.omit');
 
 const flatten = require('./lib/flatten');
-const getFsParams = require('./lib/getFsParams');
-const BemFilter = require('./lib/filters/bem');
-const TgFilter = require('./lib/filters/typograf');
-const MdFilter = require('./lib/filters/markdown');
+const createFiltersQueue = require('./lib/createFiltersQueue');
+const getParamsFromFile = require('./lib/getParamsFromFile');
+const validate = require('./lib/validator/validate');
+
+const applyFilters = require('./lib/applyFilters');
 
 module.exports = function( source ) {
 
@@ -15,33 +16,22 @@ module.exports = function( source ) {
     }
 
     const options = loaderUtils.getOptions( this );
-    const jsonDict = JSON.parse( source.toString() );
-    const cplOpts = get( jsonDict, 'compile_options', {} );
-    const content = omit( jsonDict, 'compile_options' );
+    const jsonContent = JSON.parse( source.toString() );
 
-    const fsParams = getFsParams(
-        Object.assign( {}, options.babelfish, {
-            file : this.resourcePath,
-        } ) );
-    const dict = flatten( content, fsParams.namespace );
+    const compileOpts = get( jsonContent, 'compile_options', {} );
+    const getQueue = createFiltersQueue( compileOpts.defaults );
+    const content = omit( jsonContent, 'compile_options' );
+    const dict = flatten( content, options.fsParams.namespace );
 
-    const tgFilter = new TgFilter(
-        Object.assign( {}, options.typograf, {
-            locale : fsParams.locale,
-        } )
-    );
+    validate( options );
 
-    const bemFilter = new BemFilter( {
-        compiler    : cplOpts,
-        filtersList : options.bemFilters,
-    } );
-
-    const mdFilter = new MdFilter( options.markdown );
+    options.fsParams = getParamsFromFile( this.resourcePath, options.babelfish );
+    options.compileOptions = compileOpts;
 
     const result = {
         fallback : options.babelfish.fallback,
         locales  : {
-            [ fsParams.locale ] : {},
+            [ options.fsParams.locale ] : {},
         },
     };
 
@@ -51,33 +41,10 @@ module.exports = function( source ) {
             continue;
         }
 
-        const entities = key.split('-');
-        const filterQueue = [ ...entities.slice( 1 ).reverse(), ...get( cplOpts, 'defaults',[] ) ];
-        let phrase = entities[ 0 ];
+        const filtersQueue = getQueue( key );
+        const phrase = key.replace( /-(?:bem|tg|md)/g, '' );
 
-        filterQueue.forEach( function( filter ) {
-            switch ( filter ) {
-                case 'bem':
-                    dict[ key ] = bemFilter.apply( dict[ key ] );
-
-                    break;
-
-                case 'tg':
-                    dict[ key ] = tgFilter.apply( dict[ key ] );
-
-                    break;
-
-                case 'md':
-                    dict[ key ] = mdFilter.apply( dict[ key ] );
-
-                    break;
-
-                default:
-                    phrase = key;
-            }
-        } );
-
-        result.locales[ fsParams.locale ][ phrase ] = dict[ key ];
+        result.locales[ options.fsParams.locale ][ phrase ] = applyFilters( dict[ key ], filtersQueue, options );
     }
 
     return `module.exports = ${JSON.stringify( result )}`;
