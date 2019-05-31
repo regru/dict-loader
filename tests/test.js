@@ -42,8 +42,9 @@ suite( 'dict-loader', function() {
         suite( 'typograf', function() {
 
             const data = require('./fixtures/complexInitData');
-            const tgFilter = new TgFilter( 'en_US', {
-                rules : {
+            const tgFilter = new TgFilter( {
+                locale : 'en-US',
+                rules  : {
                     disabled : [
                         'common/space/afterPunctuation',
                     ],
