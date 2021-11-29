@@ -34,7 +34,7 @@
     "lodash.isplainobject": "4.0.6",
     "markdown-it": "8.3.1",
     "object.omit": "2.0.1",
-    "typograf": "^6.13.0"
+    "typograf": "6.13.0"
   },
   "bugs": {
     "url": "https://github.com/regru/dict-loader/issues"
