@@ -20,10 +20,10 @@
   "author": "Makarychev Andrey <shiftmailbox@gmail.com>",
   "license": "MIT",
   "devDependencies": {
-    "@regru/eslint-config-regru-light": "^2.2.0",
+    "@eslint/js": "^10.0.1",
     "babelfish": "git+https://github.com/regru/babelfish.git#1.1.4-regru",
     "chai": "^3.5.0",
-    "eslint": "^5.16.0",
+    "eslint": "^10.3.0",
     "mocha": "^5.2.0",
     "sinon": "^6.3.5"
   },
@@ -34,7 +34,7 @@
     "lodash.isplainobject": "4.0.6",
     "markdown-it": "8.4.2",
     "object.omit": "2.0.1",
-    "typograf": "6.15.1"
+    "typograf": "^6.13.0"
   },
   "bugs": {
     "url": "https://github.com/regru/dict-loader/issues"
