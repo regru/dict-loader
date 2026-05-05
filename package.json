@@ -12,7 +12,8 @@
     "test": "tests"
   },
   "scripts": {
-    "test": "mocha --ui tdd --recursive tests/",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "lint": "eslint ./",
     "lint:fix": "eslint --fix ./",
     "prepublishOnly": "npm run lint"
@@ -22,10 +23,8 @@
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "babelfish": "git+https://github.com/regru/babelfish.git#1.1.4-regru",
-    "chai": "^3.5.0",
     "eslint": "^10.3.0",
-    "mocha": "^5.2.0",
-    "sinon": "^6.3.5"
+    "vitest": "^4.1.5"
   },
   "dependencies": {
     "ajv": "6.15.0",

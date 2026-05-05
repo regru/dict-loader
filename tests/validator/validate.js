@@ -1,5 +1,3 @@
-const should = require('chai').should(); // eslint-disable-line no-unused-vars
-
 const validate = require('../../lib/validator/validate');
 
 const optionsObj = {
@@ -12,19 +10,19 @@ const optionsObj = {
     markdown : {},
 };
 
-suite( 'lib/validator/validate', function() {
+describe( 'lib/validator/validate', function() {
 
-    test( 'Should throw if none options passed', function() {
-        ( () => validate() ).should.throw();
+    it( 'Should throw if none options passed', function() {
+        expect( () => validate() ).toThrow();
     } );
 
-    test( 'Should not throw if typograph or markdown options were not passed', function() {
+    it( 'Should not throw if typograph or markdown options were not passed', function() {
         const res = validate( { babelfish: optionsObj.babelfish } );
 
-        res.should.to.be.true;
+        expect( res ).toBe( true );
     } );
 
-    test( 'Should throw if babelfish options is not valid', function() {
+    it( 'Should throw if babelfish options is not valid', function() {
         const fallbackObj = {
             babelfish : {
                 fallback      : {},
@@ -49,8 +47,8 @@ suite( 'lib/validator/validate', function() {
             },
         };
 
-        ( () => validate( fallbackObj ) ).should.throw();
-        ( () => validate( localeObj ) ).should.throw();
-        ( () => validate( capturingObj ) ).should.throw();
+        expect( () => validate( fallbackObj ) ).toThrow();
+        expect( () => validate( localeObj ) ).toThrow();
+        expect( () => validate( capturingObj ) ).toThrow();
     } );
 } );

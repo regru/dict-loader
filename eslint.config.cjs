@@ -9,8 +9,10 @@ module.exports = [
     files: ['tests/**/*.js'],
     languageOptions: {
       globals: {
-        suite: 'readonly',
-        test: 'readonly',
+        describe: 'readonly',
+        it: 'readonly',
+        expect: 'readonly',
+        vi: 'readonly',
         beforeEach: 'readonly',
         afterEach: 'readonly',
       },

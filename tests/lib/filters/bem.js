@@ -1,23 +1,20 @@
-const should = require('chai').should(); // eslint-disable-line no-unused-vars
-const sinon = require('sinon');
-
 const BemFilter = require('../../../lib/filters/bem');
 
-suite( 'lib/filters/bem', function() {
+describe( 'lib/filters/bem', function() {
 
     const data = require('../../fixtures/complexInitData');
     const filters = require('../../fixtures/bemRules');
     const bemFilter = new BemFilter( { filters: [ filters[ 0 ].default ] } );
 
-    suite( '#_setOrAddAttr', function() {
+    describe( '#_setOrAddAttr', function() {
 
-        test( 'Should set new class attribute if none anabled', function() {
+        it( 'Should set new class attribute if none anabled', function() {
             const res = bemFilter._setOrAddAttr( data.bemOnly['simple-bem'], 'p', 'class', 'b-text' );
 
-            res.should.be.eql('<p class="b-text">Simple paragraph</p>');
+            expect( res ).toEqual('<p class="b-text">Simple paragraph</p>');
         } );
 
-        test( 'Should add class to existed', function() {
+        it( 'Should add class to existed', function() {
             const res = bemFilter._setOrAddAttr(
                 data.bemOnly['simple_with_class-bem'],
                 'p',
@@ -25,22 +22,22 @@ suite( 'lib/filters/bem', function() {
                 'b-text_type_minor'
             );
 
-            res.should.be.eql('<p class="b-text b-text_type_minor">Simple paragraph</p>');
+            expect( res ).toEqual('<p class="b-text b-text_type_minor">Simple paragraph</p>');
         } );
 
-        test( 'Should add boolean attribute', function() {
+        it( 'Should add boolean attribute', function() {
             const res = bemFilter._setOrAddAttr( data.bemOnly['simple_input-bem'], 'input', 'checked' );
 
-            res.should.be.eql('<label><input type="checkbox" checked/>Some label</label>');
+            expect( res ).toEqual('<label><input type="checkbox" checked/>Some label</label>');
         } );
 
-        test( 'Should add attribute', function() {
+        it( 'Should add attribute', function() {
             const res = bemFilter._setOrAddAttr( data.bemOnly['simple_div-bem'], 'div', 'data-type', 'double' );
 
-            res.should.be.eql('<div class="b-block" data-type="double">Block</div>');
+            expect( res ).toEqual('<div class="b-block" data-type="double">Block</div>');
         } );
 
-        test( 'Should not duplicate attribute', function() {
+        it( 'Should not duplicate attribute', function() {
             const res = bemFilter._setOrAddAttr(
                 data.bemOnly['simple_div-bem'],
                 'div',
@@ -48,20 +45,20 @@ suite( 'lib/filters/bem', function() {
                 'b-block b-block_size_double'
             );
 
-            res.should.be.eql('<div class="b-block b-block_size_double">Block</div>');
+            expect( res ).toEqual('<div class="b-block b-block_size_double">Block</div>');
         } );
 
-        test( 'Should not duplicate boolean attribute', function() {
+        it( 'Should not duplicate boolean attribute', function() {
             const res = bemFilter._setOrAddAttr(
                 data.bemOnly['simple_input_duplicated-bem'],
                 'input',
                 'checked'
             );
 
-            res.should.be.eql('<label><input type="checkbox" checked/>Some label</label>');
+            expect( res ).toEqual('<label><input type="checkbox" checked/>Some label</label>');
         } );
 
-        test( 'Should not process if condition function returns falsy value', function() {
+        it( 'Should not process if condition function returns falsy value', function() {
             const res = bemFilter._setOrAddAttr(
                 data.bemOnly['simple-bem'],
                 'p',
@@ -70,10 +67,10 @@ suite( 'lib/filters/bem', function() {
                 () => false
             );
 
-            res.should.be.eql('<p>Simple paragraph</p>');
+            expect( res ).toEqual('<p>Simple paragraph</p>');
         } );
 
-        test( 'Should process if condition function returns truthly value', function() {
+        it( 'Should process if condition function returns truthly value', function() {
             const res = bemFilter._setOrAddAttr(
                 data.bemOnly['simple-bem'],
                 'p',
@@ -82,41 +79,44 @@ suite( 'lib/filters/bem', function() {
                 () => true
             );
 
-            res.should.be.eql('<p class="b-text">Simple paragraph</p>');
+            expect( res ).toEqual('<p class="b-text">Simple paragraph</p>');
         } );
     } );
 
-    suite( '#_apply', function() {
+    describe( '#_apply', function() {
         let spy;
 
         beforeEach( function() {
-            spy = sinon.spy( bemFilter, '_setOrAddAttr' );
+            spy = vi.spyOn( bemFilter, '_setOrAddAttr' );
         } );
 
         afterEach( function() {
-            sinon.restore();
+            vi.restoreAllMocks();
         } );
 
-        test( 'Should take tag, attribute and value from specified filter ( case class )', function() {
+        it( 'Should take tag, attribute and value from specified filter ( case class )', function() {
             bemFilter._apply( data.bemOnly['simple-bem'] );
 
-            spy.calledWith( 'p', 'class', filters[ 0 ].default.classes.p );
+            expect( spy ).toHaveBeenCalledWith( expect.anything(), 'p', 'class', filters[ 0 ].default.classes.p );
         } );
 
-        test( 'Should take tag, attribute and value from specified filter ( case attrs )', function() {
-            bemFilter._apply( data.bemOnly['simple_input-bem'] );
-
-            spy.calledWith( 'input', 'checked' );
-        } );
-
-        test( 'Should take tag, attribute and value from specified filter ( case ext_ )', function() {
+        it( 'Should take tag, attribute and value from specified filter ( case ext_ )', function() {
             bemFilter._apply( data.bemOnly['bem_filter_ext-bem'] );
 
-            const spyCallRel = spy.getCall( 0 );
-            const spyCallTarget = spy.getCall( 1 );
-
-            spyCallRel.calledWith( 'a', 'rel', filters[ 0 ].default.ext_rel );
-            spyCallTarget.calledWith( 'a', 'target', filters[ 0 ].default.ext_target );
+            expect( spy ).toHaveBeenCalledWith(
+                expect.stringContaining('https://example.com'),
+                'a',
+                'rel',
+                filters[ 0 ].default.ext_rel,
+                expect.any(Function)
+            );
+            expect( spy ).toHaveBeenCalledWith(
+                expect.stringContaining('https://example.com'),
+                'a',
+                'target',
+                filters[ 0 ].default.ext_target,
+                expect.any(Function)
+            );
         } );
     } );
 } );

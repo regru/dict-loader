@@ -1,22 +1,20 @@
-const should = require('chai').should(); // eslint-disable-line no-unused-vars
-
 const flatten = require('../lib/flatten');
 const MdFilter = require('../lib/filters/markdown');
 const TgFilter = require('../lib/filters/typograf');
 
 const Babelfish = require('babelfish');
 
-suite( 'dict-loader', function() {
+describe( 'dict-loader', function() {
 
-    suite( 'filters', function() {
+    describe( 'filters', function() {
 
-        suite( 'markdown', function() {
+        describe( 'markdown', function() {
 
             const data = require('./fixtures/complexInitData').mdOnly;
             const mdFilter = new MdFilter();
 
 
-            test( 'Should markdown string', function() {
+            it( 'Should markdown string', function() {
 
                 const filtered = flatten( data );
 
@@ -29,7 +27,7 @@ suite( 'dict-loader', function() {
                     filtered[ key ] = mdFilter.apply( filtered[ key ] );
                 }
 
-                filtered.should.be.eql( {
+                expect( filtered ).toEqual( {
                     'simple.foo'           : 'bar',
                     'simple.foo1.bar1'     : 'simple text',
                     'simple.foo1.bar2'     : ['simple', 'array'],
@@ -39,7 +37,7 @@ suite( 'dict-loader', function() {
             } );
         } );
 
-        suite( 'typograf', function() {
+        describe( 'typograf', function() {
 
             const data = require('./fixtures/complexInitData');
             const tgFilter = new TgFilter( 'en-US', {
@@ -53,7 +51,7 @@ suite( 'dict-loader', function() {
                 },
             } );
 
-            test( 'Should correct text', function() {
+            it( 'Should correct text', function() {
 
                 const filtered = flatten( data.typograf );
 
@@ -66,10 +64,10 @@ suite( 'dict-loader', function() {
                     filtered[ key ] = tgFilter.apply( filtered[ key ] );
                 }
 
-                filtered.should.be.eql( { 'text-tg': 'Some text (text) that should be&nbsp;corrected' } );
+                expect( filtered ).toEqual( { 'text-tg': 'Some text (text) that should be&nbsp;corrected' } );
             } );
 
-            test( 'Should not damage babelfish structure', function() {
+            it( 'Should not damage babelfish structure', function() {
 
                 const filtered = flatten( data.typograf2 );
                 const l10n = new Babelfish('ru-RU');
@@ -83,16 +81,16 @@ suite( 'dict-loader', function() {
                     filtered[ key ] = tgFilter.apply( filtered[ key ] );
                 }
 
-                filtered.should.be.eql( {
+                expect( filtered ).toEqual( {
                     'text-tg'      : '#{count} ((неоплаченный счёт|неоплаченных счёта|неоплаченных счетов)):count',
                     'more_text-tg' : '#{count} ((=0 | |неоплаченных счёта|неоплаченных счетов)):count',
                 } );
 
                 l10n.addPhrase( 'ru-RU', 'test', filtered[ 'more_text-tg' ] );
 
-                l10n.t( 'ru-RU', 'test', { count: 0 } ).should.be.equal('0 ');
-                l10n.t( 'ru-RU', 'test', { count: 2 } ).should.be.equal('2 неоплаченных счёта');
-                l10n.t( 'ru-RU', 'test', { count: 10 } ).should.be.equal('10 неоплаченных счетов');
+                expect( l10n.t( 'ru-RU', 'test', { count: 0 } ) ).toBe('0 ');
+                expect( l10n.t( 'ru-RU', 'test', { count: 2 } ) ).toBe('2 неоплаченных счёта');
+                expect( l10n.t( 'ru-RU', 'test', { count: 10 } ) ).toBe('10 неоплаченных счетов');
             } );
         } );
     } );
