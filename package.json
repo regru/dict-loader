@@ -15,7 +15,7 @@
     "test": "mocha --ui tdd --recursive tests/",
     "lint": "eslint ./",
     "lint:fix": "eslint --fix ./",
-    "prepublish": "npm run lint"
+    "prepublishOnly": "npm run lint"
   },
   "author": "Makarychev Andrey <shiftmailbox@gmail.com>",
   "license": "MIT",
