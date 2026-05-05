@@ -37,7 +37,7 @@ module.exports = function( source ) {
 
     for ( let key in dict ) {
 
-        if ( !dict.hasOwnProperty( key ) ) {
+        if ( !Object.hasOwn( dict, key ) ) {
             continue;
         }
 
